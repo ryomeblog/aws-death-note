@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Static Site with Basic Authentication</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 5px solid #28a745;
+        }
+        .info {
+            background-color: #cce5ff;
+            color: #004085;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 5px solid #007bff;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 Basic認証が成功しました！</h1>
+        
+        <div class="success">
+            <strong>認証成功!</strong> CloudFront経由でS3バケットにアクセスできています。
+        </div>
+        
+        <div class="info">
+            <h3>実装内容:</h3>
+            <ul>
+                <li>CloudFront Functions を使用したBasic認証</li>
+                <li>S3バケット（静的サイトホスティング）</li>
+                <li>Origin Access Identity による安全なアクセス制御</li>
+                <li>ユーザー名: <code>admin</code></li>
+                <li>パスワード: <code>password123</code></li>
+            </ul>
+        </div>
+        
+        <p style="text-align: center; margin-top: 30px; color: #666;">
+            このページはCloudFront経由で配信されており、Basic認証で保護されています。
+        </p>
+    </div>
+</body>
+</html>
