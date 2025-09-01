@@ -25,6 +25,9 @@ export class AwsDeathNoteStack extends cdk.Stack {
       },
     });
 
+    // AppSync APIの削除ポリシーを設定
+    (api.node.defaultChild as cdk.CfnResource).applyRemovalPolicy(cdk.RemovalPolicy.DESTROY);
+
     // NONEデータソースの作成
     const noneDataSource = api.addNoneDataSource('NoneDataSource', {
       name: 'NoneDataSource',
@@ -85,6 +88,9 @@ export class AwsDeathNoteStack extends cdk.Stack {
       code: cloudfront.FunctionCode.fromInline(basicAuthFunctionCode),
       runtime: cloudfront.FunctionRuntime.JS_2_0,
     });
+
+    // CloudFront Functionの削除ポリシーを設定
+    (basicAuthFunction.node.defaultChild as cdk.CfnResource).applyRemovalPolicy(cdk.RemovalPolicy.DESTROY);
 
     // CloudFrontディストリビューションの作成
     const distribution = new cloudfront.Distribution(this, 'StaticSiteDistribution', {
