@@ -6,6 +6,7 @@ import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as wafv2 from 'aws-cdk-lib/aws-wafv2';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -85,21 +86,10 @@ export class AwsDeathNoteStack extends cdk.Stack {
       runtime: cloudfront.FunctionRuntime.JS_2_0,
     });
 
-    // Origin Access Control (OAC) の作成（CDK v2推奨）
-    const originAccessControl = new cloudfront.CfnOriginAccessControl(this, 'StaticSiteOAC', {
-      originAccessControlConfig: {
-        name: 'StaticSiteOAC',
-        originAccessControlOriginType: 's3',
-        signingBehavior: 'always',
-        signingProtocol: 'sigv4',
-        description: 'Origin Access Control for S3 Static Site',
-      },
-    });
-
     // CloudFrontディストリビューションの作成
     const distribution = new cloudfront.Distribution(this, 'StaticSiteDistribution', {
       defaultBehavior: {
-        origin: new origins.S3Origin(bucket),
+        origin: origins.S3BucketOrigin.withOriginAccessControl(bucket),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         functionAssociations: [
           {
@@ -127,11 +117,6 @@ export class AwsDeathNoteStack extends cdk.Stack {
         },
       ],
     });
-
-    // CloudFrontディストリビューションにOACを関連付け
-    const cfnDistribution = distribution.node.defaultChild as cloudfront.CfnDistribution;
-    cfnDistribution.addPropertyOverride('DistributionConfig.Origins.0.S3OriginConfig.OriginAccessIdentity', '');
-    cfnDistribution.addPropertyOverride('DistributionConfig.Origins.0.OriginAccessControlId', originAccessControl.attrId);
 
     // S3バケットポリシーを追加してCloudFrontからのアクセスを許可
     bucket.addToResourcePolicy(
